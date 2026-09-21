@@ -2,16 +2,33 @@ spring:
   application:
     name: proyecto-backend
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    url: ${DB_URL:jdbc:postgresql://ep-bold-bird-acn8s719-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&prepareThreshold=0}
+    username: ${DB_USER:neondb_owner}
+    password: ${DB_PASSWORD:npg_Vzmj1t8DZKrF}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  secret: ${JWT_SECRET:SuperSecretRickPrimeDimensionalKeyOmegaDevice999999}
+  access-token-expiration-ms: ${JWT_ACCESS_EXPIRATION:86400000}
+  refresh-token-expiration-ms: ${JWT_REFRESH_EXPIRATION:604800000}
 
 server:
   port: ${PORT:8080}

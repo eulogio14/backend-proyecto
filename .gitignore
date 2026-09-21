@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Antigravity Rules & Local notes ###
+GEMINI.md
+*.txt
