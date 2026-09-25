@@ -1,0 +1,550 @@
+{
+  "info": {
+    "_postman_id": "c0c0c0c0-1234-5678-9abc-contactocero01",
+    "name": "Contacto Cero & Superación API - DBP 2026-2",
+    "description": "Colección completa de endpoints para el proyecto Backend de Contacto Cero y Superación Emocional con IA.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "01. Autenticación & Seguridad",
+      "item": [
+        {
+          "name": "Registro de Usuario",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Eulogio Developer\",\n  \"email\": \"usuario.prueba@uni.edu.pe\",\n  \"password\": \"SuperSecretPassword123!\",\n  \"nombreEx\": \"Camila\",\n  \"fotoPerfilEx\": \"https://images.unsplash.com/photo-1534528741775-53994a69daeb\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/registro",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "registro"]
+            }
+          }
+        },
+        {
+          "name": "Login con Credenciales",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) {",
+                  "    pm.collectionVariables.set('token', jsonData.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+                  "    console.log('Token JWT capturado con éxito');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"usuario.prueba@uni.edu.pe\",\n  \"password\": \"SuperSecretPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) {",
+                  "    pm.collectionVariables.set('token', jsonData.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "Login con Google OAuth2",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"GOOGLE_ID_TOKEN_AQUI\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Perfil & Usuario",
+      "item": [
+        {
+          "name": "Obtener Perfil de Usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/perfil",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "perfil"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Configuración del Ex",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreEx\": \"Camila R.\",\n  \"apodoEx\": \"Cami\",\n  \"fotoPerfilEx\": \"https://images.unsplash.com/photo-1534528741775-53994a69daeb\",\n  \"estadoWhatsAppEx\": \"en línea\",\n  \"personalidadEx\": \"FRIA\",\n  \"fechaRuptura\": \"2026-08-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/config-ex",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "config-ex"]
+            }
+          }
+        },
+        {
+          "name": "Cambiar Modo App (RECORDAR / SUPERAR)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"modo\": \"SUPERAR\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/modo",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "modo"]
+            }
+          }
+        },
+        {
+          "name": "Subir Dataset de Chat del Ex (Inspirado en JustZando)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreRemitenteEx\": \"Camila\",\n  \"contenidoChat\": \"[12/05/24, 22:10] Eulogio: Hola Camila, ¿cómo estás?\\n[12/05/24, 22:11] Camila: Hola. Ocupada. 👍\\n[12/05/24, 22:12] Eulogio: Solo quería saber de ti...\\n[12/05/24, 22:15] Camila: Ya no me escribas. Ok. 🙄\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/ex-dataset",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "ex-dataset"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Chats & Simulador IA",
+      "item": [
+        {
+          "name": "Listar Todos los Chats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chats",
+              "host": ["{{baseUrl}}"],
+              "path": ["chats"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Chat con el Ex (Simulador IA)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chats/CHAT_EX",
+              "host": ["{{baseUrl}}"],
+              "path": ["chats", "CHAT_EX"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Chat de Apoyo Emocional",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chats/CHAT_APOYO",
+              "host": ["{{baseUrl}}"],
+              "path": ["chats", "CHAT_APOYO"]
+            }
+          }
+        },
+        {
+          "name": "Enviar Mensaje al Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contenido\": \"Hola, estuve pensando en ti... ¿cómo has estado?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chats/1/mensajes",
+              "host": ["{{baseUrl}}"],
+              "path": ["chats", "1", "mensajes"]
+            }
+          }
+        },
+        {
+          "name": "Limpiar Historial de Chat",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chats/1/mensajes",
+              "host": ["{{baseUrl}}"],
+              "path": ["chats", "1", "mensajes"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Diario Emocional",
+      "item": [
+        {
+          "name": "Listar Entradas del Diario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/diarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["diarios"]
+            }
+          }
+        },
+        {
+          "name": "Crear Entrada en el Diario",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Día 12: Aún cuesta un poco\",\n  \"contenido\": \"Hoy pasé por el parque donde solíamos caminar. Me dio algo de nostalgia pero decidí no escribirle y concentrarme en mis proyectos.\",\n  \"estadoAnimo\": \"EN_PAZ\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/diarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["diarios"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Entrada del Diario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/diarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["diarios", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Contacto Cero & Rachas",
+      "item": [
+        {
+          "name": "Obtener Estadísticas de Racha",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/contacto-cero/estadisticas",
+              "host": ["{{baseUrl}}"],
+              "path": ["contacto-cero", "estadisticas"]
+            }
+          }
+        },
+        {
+          "name": "Listar Historial de Recaídas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/contacto-cero/recaidas",
+              "host": ["{{baseUrl}}"],
+              "path": ["contacto-cero", "recaidas"]
+            }
+          }
+        },
+        {
+          "name": "Registrar Recaída (Dispara Evento y Resetea Racha)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"motivo\": \"Vi una historia suya en Instagram de fiesta y le envié un mensaje\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/contacto-cero/recaidas",
+              "host": ["{{baseUrl}}"],
+              "path": ["contacto-cero", "recaidas"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Red Flags",
+      "item": [
+        {
+          "name": "Listar Red Flags Registradas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/red-flags",
+              "host": ["{{baseUrl}}"],
+              "path": ["red-flags"]
+            }
+          }
+        },
+        {
+          "name": "Crear Red Flag",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Gaslighting constante\",\n  \"descripcion\": \"Siempre minimizaba mis preocupaciones diciendo que estaba exagerando o loco.\",\n  \"gravedad\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/red-flags",
+              "host": ["{{baseUrl}}"],
+              "path": ["red-flags"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Red Flag",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/red-flags/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["red-flags", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Recuerdos Nostálgicos",
+      "item": [
+        {
+          "name": "Listar Recuerdos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recuerdos",
+              "host": ["{{baseUrl}}"],
+              "path": ["recuerdos"]
+            }
+          }
+        },
+        {
+          "name": "Crear Recuerdo",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Viaje a la playa\",\n  \"descripcion\": \"Nuestro primer viaje juntos en febrero.\",\n  \"urlFoto\": \"https://images.unsplash.com/photo-1507525428034-b723cf961d3e\",\n  \"fechaRecuerdo\": \"2025-02-14\",\n  \"nivelNostalgia\": 4,\n  \"tipo\": \"FOTO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/recuerdos",
+              "host": ["{{baseUrl}}"],
+              "path": ["recuerdos"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Recuerdo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recuerdos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["recuerdos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "08. Panel de Administración (Requiere ROLE_ADMIN)",
+      "item": [
+        {
+          "name": "Obtener Métricas Globales del Sistema",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/metricas-globales",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "metricas-globales"]
+            }
+          }
+        },
+        {
+          "name": "Listar Todas las Configuraciones de Anuncios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/anuncios",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "anuncios"]
+            }
+          }
+        },
+        {
+          "name": "Crear Configuración de Anuncio",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clave\": \"BANNER_CHAT_MOTIVACIONAL\",\n  \"titulo\": \"Banner Chat Recuperación\",\n  \"adUnitId\": \"ca-app-pub-3940256099942544/6300978111\",\n  \"activo\": true,\n  \"frecuenciaMensajes\": 5,\n  \"descripcion\": \"Banner que se muestra cada 5 mensajes en el simulador\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/anuncios",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "anuncios"]
+            }
+          }
+        },
+        {
+          "name": "Alternar Estado Activo/Inactivo de Anuncio",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/anuncios/1/toggle",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "anuncios", "1", "toggle"]
+            }
+          }
+        },
+        {
+          "name": "Listar Anuncios Activos (Público/Cliente)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/anuncios/activos",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "anuncios", "activos"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
