@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: contactocero-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: contactocero_db
+      POSTGRES_USER: contactocero_user
+      POSTGRES_PASSWORD: contactocero_secret_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U contactocero_user -d contactocero_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: contactocero-backend
+    restart: on-failure
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres-db:5432/contactocero_db
+      DB_USER: contactocero_user
+      DB_PASSWORD: contactocero_secret_password
+      JWT_SECRET: SuperSecretRickPrimeDimensionC137Key999999
+      PORT: 8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
