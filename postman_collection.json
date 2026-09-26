@@ -8,7 +8,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://backend-proyecto-si6n.onrender.com/api/v1",
+      "value": "http://54.80.114.98:8080/",
       "type": "string"
     },
     {
