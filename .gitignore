@@ -35,3 +35,6 @@ build/
 ### Antigravity Rules & Local notes ###
 GEMINI.md
 *.txt
+*.pem
+deploy-to-ec2.sh
+setup-ec2.sh
