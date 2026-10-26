@@ -296,6 +296,31 @@ El desarrollo se organizó mediante un tablero Kanban en GitHub Projects estruct
 * `DB_PASSWORD`: Credencial de acceso a base de datos.
 * `JWT_SECRET`: Clave secreta criptográfica HMAC256.
 * `PORT`: Puerto de escucha del servidor (por defecto `8080`).
+* `OCR_SERVICE_URL`: URL del servicio Python de OCR (por defecto `http://localhost:8001`). Se levanta con `python server.py` dentro de `proyect-script`.
+* `GEMINI_API_KEY`: Clave de Google AI Studio para imitar al Ex con Gemini (opción recomendada por su capa gratuita). Opcional.
+* `AI_PROVIDER`: `gemini` u `openai` para forzar un proveedor. Opcional.
+* `AI_API_KEY`: Clave de una API compatible con OpenAI (Groq, OpenAI, etc.). También se acepta `GROQ_API_KEY`.
+* `AI_BASE_URL`: URL base del proveedor compatible con OpenAI (por defecto `https://api.groq.com/openai/v1`).
+* `AI_MODEL`: Modelo a usar (por defecto `llama-3.3-70b-versatile` para Groq o `gemini-2.5-flash-lite` para Gemini).
+* `AI_MAX_OUTPUT_TOKENS`: Límite de tokens de salida para controlar el gasto (por defecto `150`).
+* `AI_DATASET_MAX_CHARS`: Máximo de caracteres del dataset que se envían como contexto (por defecto `6000`).
+
+Si no se configura ninguna clave de IA, el chat sigue funcionando con la heurística local y no consume cuota.
+
+#### Entrenar Ex desde capturas de WhatsApp
+
+1. Ejecuta el OCR: `cd proyect-script && source .venv/bin/activate && python server.py`.
+2. Sube las capturas desde el frontend en **Entrenar Ex** o con:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/usuarios/ex-dataset/imagenes \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "imagenes=@captura1.jpg" \
+  -F "imagenes=@captura2.jpg" \
+  -F "nombreRemitenteEx=Camila"
+```
+
+El endpoint reenvía las imágenes al OCR, deduplica los mensajes contra el dataset existente, los ordena de antiguo a más actual y guarda el TXT completo en `Usuario.datasetEntrenamientoEx`.
 
 ### 10.2 Documentación Swagger / OpenAPI
 La documentación interactiva OpenAPI 3 está disponible en el servidor local o desplegado:

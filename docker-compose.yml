@@ -1,41 +1,40 @@
 version: '3.8'
 
 services:
-  postgres-db:
-    image: postgres:16-alpine
-    container_name: contactocero-postgres
-    restart: always
-    environment:
-      POSTGRES_DB: contactocero_db
-      POSTGRES_USER: contactocero_user
-      POSTGRES_PASSWORD: contactocero_secret_password
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U contactocero_user -d contactocero_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  backend-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: contactocero-backend
+  backend:
+    image: eulogio14/simulador-backend:latest
+    container_name: simulador-ex-backend
     restart: on-failure
-    depends_on:
-      postgres-db:
-        condition: service_healthy
-    environment:
-      DB_URL: jdbc:postgresql://postgres-db:5432/contactocero_db
-      DB_USER: contactocero_user
-      DB_PASSWORD: contactocero_secret_password
-      JWT_SECRET: SuperSecretRickPrimeDimensionC137Key999999
-      PORT: 8080
+    env_file:
+      - .env
     ports:
-      - "8080:8080"
+      - "80:8080"
+    depends_on:
+      - ocr
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8080
+      OCR_SERVICE_URL: http://ocr:8001
+      AI_PROVIDER: gemini
+      GEMINI_MODEL: gemini-3.5-flash
+      GEMINI_BASE_URL: https://generativelanguage.googleapis.com/v1beta/models
+      MAIL_PORT: 587
+    links:
+      - ocr
+
+  ocr:
+    image: eulogio14/simulador-ocr:latest
+    container_name: simulador-ex-ocr
+    restart: on-failure
+
+    ports:
+      - "8001:8001"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8001
+      SALIDA_DIR: /app/salidas
+    volumes:
+      - ocr-salidas:/app/salidas
 
 volumes:
-  pgdata:
+  ocr-salidas:

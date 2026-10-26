@@ -52,8 +52,7 @@ public class AuthService {
                 .email(request.getEmail().toLowerCase().trim())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .rol(Rol.ROLE_USER)
-                .modoActual(ModoApp.RECORDAR)
-                .nombreEx(request.getNombreEx() != null ? request.getNombreEx() : "Mi Ex")
+                .nombreEx(request.getNombreEx())
                 .fotoPerfilEx(request.getFotoPerfilEx())
                 .fechaInicioContactoCero(LocalDateTime.now())
                 .fechaRegistro(LocalDateTime.now())
@@ -138,7 +137,6 @@ public class AuthService {
                         .nombre(nombre != null ? nombre : "Usuario Google")
                         .password(passwordEncoder.encode(UUID.randomUUID().toString()))
                         .rol(Rol.ROLE_USER)
-                        .modoActual(ModoApp.RECORDAR)
                         .fechaInicioContactoCero(LocalDateTime.now())
                         .fechaRegistro(LocalDateTime.now())
                         .build();

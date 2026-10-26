@@ -1,23 +1,12 @@
 spring:
   application:
     name: proyecto-backend
-  datasource:
-    url: ${DB_URL:jdbc:postgresql://ep-bold-bird-acn8s719-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&prepareThreshold=0}
-    username: ${DB_USER:neondb_owner}
-    password: ${DB_PASSWORD:npg_Vzmj1t8DZKrF}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+  profiles:
+    # Si no se especifica nada, arranca en modo 'dev'
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # Configuraciones comunes para todos los entornos
   mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -25,10 +14,34 @@ spring:
           starttls:
             enable: true
 
-jwt:
-  secret: ${JWT_SECRET:SuperSecretRickPrimeDimensionalKeyOmegaDevice999999}
-  access-token-expiration-ms: ${JWT_ACCESS_EXPIRATION:86400000}
-  refresh-token-expiration-ms: ${JWT_REFRESH_EXPIRATION:604800000}
+  # Necesario para subir varias capturas de WhatsApp al endpoint de OCR.
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 100MB
 
-server:
-  port: ${PORT:8080}
+jwt:
+  access-token-expiration-ms: 86400000
+  refresh-token-expiration-ms: 604800000
+
+# Microservicio Python de OCR (proyect-script/server.py)
+ocr:
+  service:
+    url: ${OCR_SERVICE_URL:http://localhost:8001}
+
+# API de IA para imitar al Ex.
+# - Gemini: define GEMINI_API_KEY
+# - Groq/OpenAI: define AI_API_KEY (o GROQ_API_KEY) y opcionalmente AI_BASE_URL / AI_MODEL
+# Si no hay ninguna clave, se usa la heurística local sin gastar tokens.
+ia:
+  provider: ${AI_PROVIDER:}
+  gemini-api-key: ${GEMINI_API_KEY:}
+  gemini-base-url: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta/models}
+  gemini-model: ${GEMINI_MODEL:gemini-3.5-flash}
+  openai-api-key: ${AI_API_KEY:${GROQ_API_KEY:}}
+  openai-base-url: ${AI_BASE_URL:https://api.groq.com/openai/v1}
+  openai-model: ${AI_MODEL:llama-3.3-70b-versatile}
+  max-output-tokens: ${AI_MAX_OUTPUT_TOKENS:150}
+  temperature: ${AI_TEMPERATURE:0.8}
+  dataset-max-chars: ${AI_DATASET_MAX_CHARS:6000}
+  history-max-messages: ${AI_HISTORY_MAX_MESSAGES:12}

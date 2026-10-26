@@ -20,10 +20,6 @@ public class ContactoCeroController {
 
     private final ContactoCeroService contactoCeroService;
 
-    @GetMapping("/estadisticas")
-    public ResponseEntity<EstadisticasContactoCeroDto> obtenerEstadisticas(Authentication auth) {
-        return ResponseEntity.ok(contactoCeroService.obtenerEstadisticas(auth.getName()));
-    }
 
     @GetMapping("/recaidas")
     public ResponseEntity<List<RecaidaResponseDto>> listarRecaidas(Authentication auth) {

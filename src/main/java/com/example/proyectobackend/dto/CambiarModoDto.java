@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CambiarModoDto {
-    @NotNull(message = "El nuevo modo de aplicación es obligatorio (RECORDAR o SUPERAR)")
+    @NotNull(message = "El nuevo modo de aplicación es obligatorio (RECORDAR)")
     private ModoApp modo;
 }

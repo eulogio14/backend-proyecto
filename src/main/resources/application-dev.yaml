@@ -1,0 +1,35 @@
+spring:
+  # Carga claves locales (GEMINI_API_KEY, etc.) desde .env, que está en
+  # .gitignore. Si el archivo no existe, la app arranca igual.
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    # Usualmente los profesionales prueban contra un Postgres local o en Docker
+    url: jdbc:postgresql://localhost:5432/ex-db
+    username: postgres
+    password: 2008
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      # 'update' conserva usuarios y datasets al reiniciar el backend.
+      # Con 'create' se borraba todo y los tokens guardados quedaban
+      # apuntando a usuarios que ya no existían (provocaba 401/403).
+      ddl-auto: update
+    show-sql: true # Útil para ver las consultas en la terminal local
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tu_correo_de_prueba@gmail.com
+    password: tu_app_password_de_prueba
+
+jwt:
+  # Secreto dummy solo para que compile y funcione localmente
+  secret: SuperSecretRickPrimeDimensionalKeyOmegaDevice999999
+
+server:
+  port: 8080

@@ -1,6 +1,6 @@
 package com.example.proyectobackend.dto;
 
-import com.example.proyectobackend.model.ModoApp;
+
 import com.example.proyectobackend.model.Rol;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +19,6 @@ public class UsuarioResponseDto {
     private String nombre;
     private String email;
     private Rol rol;
-    private ModoApp modoActual;
     private String nombreEx;
     private String apodoEx;
     private String fotoPerfilEx;

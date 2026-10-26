@@ -35,13 +35,7 @@ public class ContactoCeroService {
 
         int diasAlcanzados = calcularDiasActuales(usuario);
 
-        // Actualizar racha máxima si la racha actual la supera
-        if (diasAlcanzados > usuario.getRachaMaximaContactoCero()) {
-            usuario.setRachaMaximaContactoCero(diasAlcanzados);
-        }
 
-        // Reiniciar contador de contacto cero
-        usuario.setDiasRachaContactoCero(0);
         usuario.setFechaInicioContactoCero(LocalDateTime.now());
         usuarioRepository.save(usuario);
 
@@ -60,28 +54,7 @@ public class ContactoCeroService {
         return dtoMapper.toRecaidaResponseDto(guardada);
     }
 
-    @Transactional
-    public EstadisticasContactoCeroDto obtenerEstadisticas(String email) {
-        Usuario usuario = usuarioService.encontrarPorEmail(email);
-        int diasActuales = calcularDiasActuales(usuario);
 
-        if (diasActuales != usuario.getDiasRachaContactoCero()) {
-            usuario.setDiasRachaContactoCero(diasActuales);
-            if (diasActuales > usuario.getRachaMaximaContactoCero()) {
-                usuario.setRachaMaximaContactoCero(diasActuales);
-            }
-            usuarioRepository.save(usuario);
-        }
-
-        long totalRecaidas = recaidaRepository.countByUsuarioId(usuario.getId());
-
-        return EstadisticasContactoCeroDto.builder()
-                .diasRachaActual(usuario.getDiasRachaContactoCero())
-                .rachaMaxima(usuario.getRachaMaximaContactoCero())
-                .totalRecaidas(totalRecaidas)
-                .fechaInicioContactoCero(usuario.getFechaInicioContactoCero())
-                .build();
-    }
 
     @Transactional(readOnly = true)
     public List<RecaidaResponseDto> listarRecaidas(String email) {

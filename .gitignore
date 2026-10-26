@@ -36,5 +36,3 @@ build/
 GEMINI.md
 *.txt
 *.pem
-deploy-to-ec2.sh
-setup-ec2.sh

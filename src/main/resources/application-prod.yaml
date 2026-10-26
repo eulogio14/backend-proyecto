@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    # Acepta DATABASE_URL de Neon (postgresql://...) o DB_URL/DB_USER/DB_PASSWORD
+    url: ${DATABASE_URL:${DB_URL}}
+    username: ${DB_USER:}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update} # Usa update o validate según entorno
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+
+jwt:
+  secret: ${JWT_SECRET}
+
+server:
+  port: ${PORT:8080}
+
+# Microservicio Python de OCR (desplegar en AWS/Render)
+ocr:
+  service:
+    url: ${OCR_SERVICE_URL:http://localhost:8001}
+
+# IA
+ia:
+  provider: ${AI_PROVIDER:gemini}
+  gemini-api-key: ${GEMINI_API_KEY:}
+  gemini-base-url: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta/models}
+  gemini-model: ${GEMINI_MODEL:gemini-3.5-flash}
+  openai-api-key: ${AI_API_KEY:${GROQ_API_KEY:}}
+  openai-base-url: ${AI_BASE_URL:https://api.groq.com/openai/v1}
+  openai-model: ${AI_MODEL:llama-3.3-70b-versatile}
+  max-output-tokens: ${AI_MAX_OUTPUT_TOKENS:150}
+  temperature: ${AI_TEMPERATURE:0.8}
+  dataset-max-chars: ${AI_DATASET_MAX_CHARS:6000}
+  history-max-messages: ${AI_HISTORY_MAX_MESSAGES:12}

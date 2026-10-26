@@ -19,6 +19,9 @@ public class RegistroRequestDto {
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
+    @NotBlank(message = "El nombre de la ex es obligatorio")
     private String nombreEx;
+
+    @NotBlank(message = "La foto de perfil de tu ex es obligatoria")
     private String fotoPerfilEx;
 }

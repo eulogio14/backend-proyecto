@@ -28,9 +28,6 @@ public class Usuario {
 
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private ModoApp modoActual = ModoApp.RECORDAR;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -38,15 +35,15 @@ public class Usuario {
     private Rol rol = Rol.ROLE_USER;
 
     // --- Perfil del Ex para la apariencia de WhatsApp ---
-    @Builder.Default
+    @Column(nullable = false)
     private String nombreEx = "Mi Ex";
 
-    private String apodoEx;
-
+    @Column(name = "foto_perfil_ex", columnDefinition = "TEXT")
     private String fotoPerfilEx;
 
-    @Builder.Default
-    private String estadoWhatsAppEx = "en línea";
+    @Column(name = "foto_perfil_user", columnDefinition = "TEXT")
+    private String fotoPerfil;
+
 
     @Builder.Default
     private String personalidadEx = "NOSTALGICA_DISTANTE"; // FRIA, CARIÑOSA, TOXICA, NOSTALGICA_DISTANTE
@@ -59,11 +56,6 @@ public class Usuario {
 
     private LocalDateTime fechaInicioContactoCero;
 
-    @Builder.Default
-    private int diasRachaContactoCero = 0;
-
-    @Builder.Default
-    private int rachaMaximaContactoCero = 0;
 
     @Builder.Default
     private LocalDateTime fechaRegistro = LocalDateTime.now();

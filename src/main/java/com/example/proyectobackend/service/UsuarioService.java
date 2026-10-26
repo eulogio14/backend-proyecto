@@ -31,14 +31,8 @@ public class UsuarioService {
         if (dto.getNombreEx() != null && !dto.getNombreEx().isBlank()) {
             usuario.setNombreEx(dto.getNombreEx());
         }
-        if (dto.getApodoEx() != null) {
-            usuario.setApodoEx(dto.getApodoEx());
-        }
         if (dto.getFotoPerfilEx() != null) {
             usuario.setFotoPerfilEx(dto.getFotoPerfilEx());
-        }
-        if (dto.getEstadoWhatsAppEx() != null) {
-            usuario.setEstadoWhatsAppEx(dto.getEstadoWhatsAppEx());
         }
         if (dto.getPersonalidadEx() != null) {
             usuario.setPersonalidadEx(dto.getPersonalidadEx());
@@ -54,7 +48,6 @@ public class UsuarioService {
     @Transactional
     public UsuarioResponseDto cambiarModo(String email, CambiarModoDto dto) {
         Usuario usuario = encontrarPorEmail(email);
-        usuario.setModoActual(dto.getModo());
         Usuario actualizado = usuarioRepository.save(usuario);
         return dtoMapper.toUsuarioResponseDto(actualizado);
     }

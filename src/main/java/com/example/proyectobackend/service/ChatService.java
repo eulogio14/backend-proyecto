@@ -68,6 +68,10 @@ public class ChatService {
             throw new ForbiddenException("No tienes permisos para interactuar en este chat");
         }
 
+        // 0. Historial previo (aún sin el mensaje que se está enviando)
+        List<Mensaje> historial = mensajeRepository
+                .findByChatIdOrderByTimestampAsc(chat.getId());
+
         // 1. Guardar mensaje del usuario
         Mensaje mensajeUsuario = Mensaje.builder()
                 .chat(chat)
@@ -82,7 +86,8 @@ public class ChatService {
         String respuestaTexto = simuladorExIaService.generarRespuesta(
                 usuario,
                 dto.getContenido(),
-                usuario.getModoActual()
+                ModoApp.RECORDAR,
+                historial
         );
 
         // 3. Guardar mensaje del bot (Ex o Apoyo)

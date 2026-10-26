@@ -18,16 +18,11 @@ public class DtoMapper {
                 .nombre(u.getNombre())
                 .email(u.getEmail())
                 .rol(u.getRol())
-                .modoActual(u.getModoActual())
                 .nombreEx(u.getNombreEx())
-                .apodoEx(u.getApodoEx())
                 .fotoPerfilEx(u.getFotoPerfilEx())
-                .estadoWhatsAppEx(u.getEstadoWhatsAppEx())
                 .personalidadEx(u.getPersonalidadEx())
                 .fechaRuptura(u.getFechaRuptura())
                 .fechaInicioContactoCero(u.getFechaInicioContactoCero())
-                .diasRachaContactoCero(u.getDiasRachaContactoCero())
-                .rachaMaximaContactoCero(u.getRachaMaximaContactoCero())
                 .fechaRegistro(u.getFechaRegistro())
                 .build();
     }
