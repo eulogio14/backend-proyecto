@@ -5,8 +5,6 @@ services:
     image: eulogio14/simulador-backend:latest
     container_name: simulador-ex-backend
     restart: on-failure
-    env_file:
-      - .env
     ports:
       - "80:8080"
     depends_on:
@@ -14,21 +12,23 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SERVER_PORT: 8080
+      DATABASE_URL: ${DATABASE_URL}
+      JPA_DDL_AUTO: ${JPA_DDL_AUTO}
+      JWT_SECRET: ${JWT_SECRET}
+      AI_PROVIDER: ${AI_PROVIDER}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL}
+      GEMINI_BASE_URL: ${GEMINI_BASE_URL}
       OCR_SERVICE_URL: http://ocr:8001
-      AI_PROVIDER: gemini
-      GEMINI_MODEL: gemini-3.5-flash
-      GEMINI_BASE_URL: https://generativelanguage.googleapis.com/v1beta/models
-      MAIL_PORT: 587
-    links:
-      - ocr
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
 
   ocr:
     image: eulogio14/simulador-ocr:latest
     container_name: simulador-ex-ocr
     restart: on-failure
-
-    ports:
-      - "8001:8001"
     environment:
       HOST: 0.0.0.0
       PORT: 8001

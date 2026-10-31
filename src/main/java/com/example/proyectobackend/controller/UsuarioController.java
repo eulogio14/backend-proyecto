@@ -6,6 +6,7 @@ import com.example.proyectobackend.model.ExDatasetTaskStatus;
 import com.example.proyectobackend.model.Usuario;
 import com.example.proyectobackend.repository.ExDatasetTaskRepository;
 import com.example.proyectobackend.repository.UsuarioRepository;
+import com.example.proyectobackend.service.ArchivoEnMemoria;
 import com.example.proyectobackend.service.ExDatasetQueueService;
 import com.example.proyectobackend.service.ExDatasetService;
 import com.example.proyectobackend.service.UsuarioService;
@@ -20,7 +21,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,11 +76,31 @@ public class UsuarioController {
                        + "y devuelve 202 Accepted con taskId para hacer polling.")
     @PostMapping(value = "/ex-dataset/imagenes",
                  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ExDatasetTaskResponseDto> subirImagenesDatasetEx(
+    public ResponseEntity<?> subirImagenesDatasetEx(
             Authentication auth,
             @RequestParam("imagenes") List<MultipartFile> imagenes,
             @RequestParam(value = "nombreRemitenteEx", required = false) String nombreRemitenteEx) {
+        if (imagenes == null || imagenes.isEmpty()) {
+            return ResponseEntity.badRequest().body("Debes enviar al menos una imagen");
+        }
+
         Usuario usuario = usuarioService.encontrarPorEmail(auth.getName());
+
+        List<MultipartFile> imagenesEnMemoria = new ArrayList<>(imagenes.size());
+        try {
+            for (MultipartFile f : imagenes) {
+                if (f == null || f.isEmpty()) {
+                    return ResponseEntity.badRequest().body("Una de las imágenes está vacía");
+                }
+                byte[] bytes = f.getBytes();
+                if (bytes == null || bytes.length == 0) {
+                    return ResponseEntity.badRequest().body("Una de las imágenes está vacía");
+                }
+                imagenesEnMemoria.add(new ArchivoEnMemoria(f.getOriginalFilename(), f.getContentType(), bytes));
+            }
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("No se pudo leer una de las imágenes");
+        }
 
         ExDatasetTask tarea = ExDatasetTask.builder()
                 .usuario(usuario)
@@ -88,7 +111,7 @@ public class UsuarioController {
         tarea = exDatasetTaskRepository.save(tarea);
 
         try {
-            exDatasetQueueService.procesarTarea(tarea.getId(), usuario.getId(), nombreRemitenteEx, imagenes);
+            exDatasetQueueService.procesarTarea(tarea.getId(), usuario.getId(), nombreRemitenteEx, imagenesEnMemoria);
         } catch (Exception e) {
             tarea.setEstado(ExDatasetTaskStatus.FAILED);
             tarea.setTerminadoEn(LocalDateTime.now());
