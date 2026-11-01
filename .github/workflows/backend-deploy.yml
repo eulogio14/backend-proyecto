@@ -1,0 +1,79 @@
+name: Build, push y deploy backend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Configurar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Iniciar sesión en Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Construir y subir imagen
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: |
+            eulogio14/simulador-backend:latest
+            eulogio14/simulador-backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-ec2:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preparar llave SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Generar .env
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JPA_DDL_AUTO: ${{ secrets.JPA_DDL_AUTO }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          AI_PROVIDER: ${{ secrets.AI_PROVIDER }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+          GEMINI_BASE_URL: ${{ secrets.GEMINI_BASE_URL }}
+          MAIL_HOST: ${{ secrets.MAIL_HOST }}
+          MAIL_PORT: ${{ secrets.MAIL_PORT }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+        run: |
+          cat > env.txt <<EOF
+          DATABASE_URL=$DATABASE_URL
+          JPA_DDL_AUTO=$JPA_DDL_AUTO
+          JWT_SECRET=$JWT_SECRET
+          AI_PROVIDER=$AI_PROVIDER
+          GEMINI_API_KEY=$GEMINI_API_KEY
+          GEMINI_MODEL=$GEMINI_MODEL
+          GEMINI_BASE_URL=$GEMINI_BASE_URL
+          MAIL_HOST=$MAIL_HOST
+          MAIL_PORT=$MAIL_PORT
+          MAIL_USERNAME=$MAIL_USERNAME
+          MAIL_PASSWORD=$MAIL_PASSWORD
+          EOF
+
+      - name: Subir .env y reiniciar backend
+        run: |
+          scp env.txt ec2-user@${{ secrets.EC2_HOST }}:~/simulador/.env
+          ssh ec2-user@${{ secrets.EC2_HOST }} "cd ~/simulador && chmod 600 .env && docker compose pull backend && docker compose up -d --force-recreate backend"
