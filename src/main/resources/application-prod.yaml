@@ -1,5 +1,5 @@
-spring:  datasource:
-    # Acepta DATABASE_URL de Neon (postgresql://...) o DB_URL/DB_USER/DB_PASSWORD
+spring:
+  datasource:
     url: ${DATABASE_URL:${DB_URL}}
     username: ${DB_USER:}
     password: ${DB_PASSWORD:}
